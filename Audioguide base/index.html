@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#18667d"/>
+<title>Novum Guide</title>
+<style>
+:root {
+  --bg: #307a8f;
+  --bg2: #abd6e3;
+  --bg3: #1e1e1e;
+  --border: #18667d;
+  --border2: #18667d;
+  --text: #000000;
+  --text2: #18667d;
+  --text3: #18667d;
+  --accent: #18667d;
+  --red: #c0392b;
+  --green: #5db87a;
+  --orange: #e0843a;
+  --r: 10px;
+  --r2: 16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:Georgia,serif;overflow:hidden;}
+body{display:flex;flex-direction:column;align-items:center;}
+#app{width:100%;max-width:480px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+
+header{padding:1rem 1.4rem .7rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.logo{font-size:1.3rem;font-weight:700;letter-spacing:.02em;}
+.logo span{color:var(--accent);}
+.lang-picker{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:60%;}
+.lbtn{padding:4px 10px;border-radius:20px;border:.5px solid var(--border2);background:transparent;color:var(--text2);font-family:Georgia,serif;font-size:11px;cursor:pointer;transition:all .2s;}
+.lbtn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+#timerBar{height:2px;background:var(--border);flex-shrink:0;}
+#timerFill{height:100%;background:var(--accent);width:100%;}
+#timerLabel{text-align:center;font-size:11px;color:var(--text3);padding:3px 0;flex-shrink:0;font-family:Georgia,serif;}
+
+.screen{display:none;flex:1;overflow-y:auto;padding:.8rem 1.4rem 2rem;flex-direction:column;}
+.screen.on{display:flex;}
+
+.hint{font-size:12px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.2rem;text-align:center;}
+.digits{display:flex;gap:8px;justify-content:center;margin-bottom:1.5rem;}
+.dbox{width:58px;height:74px;border:1.5px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--text);background:var(--bg2);}
+.dbox.cur{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,102,125,.2);}
+.dbox.full{background:#d4eaf2;}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;align-self:center;width:100%;}
+.nk{height:58px;border:.5px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;}
+.nk:active{background:#c2dde8;}
+.nk.sm{font-size:13px;color:var(--text2);}
+.go{width:100%;max-width:260px;align-self:center;margin-top:12px;padding:14px;border:none;border-radius:var(--r);background:var(--accent);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:Georgia,serif;}
+.go:disabled{opacity:.3;cursor:not-allowed;}
+.errmsg{text-align:center;font-size:12px;color:var(--red);min-height:18px;margin-top:6px;}
+
+.pback{display:flex;align-items:center;gap:8px;color:var(--text2);font-size:13px;cursor:pointer;margin-bottom:1rem;border:none;background:transparent;padding:0;font-family:Georgia,serif;}
+.photo-wrap{width:100%;aspect-ratio:16/9;border-radius:var(--r2);overflow:hidden;margin-bottom:1rem;background:var(--bg3);}
+.photo-wrap img{width:100%;height:100%;object-fit:cover;display:none;}
+.photo-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.photo-placeholder span{font-size:11px;color:rgba(255,255,255,.4);}
+.ptag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.ptitle{font-size:1.4rem;font-weight:700;line-height:1.2;margin-bottom:5px;}
+.pcat{font-size:12px;color:var(--text3);margin-bottom:1rem;padding-bottom:1rem;border-bottom:.5px solid var(--border);}
+.waverow{display:flex;align-items:flex-end;gap:2px;height:40px;margin-bottom:6px;cursor:pointer;}
+.wb{flex:1;border-radius:2px;background:rgba(0,0,0,.1);}
+.wb.p{background:var(--accent);}
+.wb.c{background:rgba(24,102,125,.4);}
+.ptrack{height:3px;background:var(--border2);border-radius:2px;cursor:pointer;margin-bottom:1rem;}
+.pfill{height:100%;background:var(--accent);border-radius:2px;}
+.trow{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text3);margin-bottom:6px;}
+.statrow{display:flex;align-items:center;gap:6px;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+.dot.off{background:var(--border2);}
+.controls{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:1.2rem;}
+.cbtn{width:44px;height:44px;border-radius:50%;border:.5px solid var(--border2);background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:11px;flex-direction:column;gap:2px;}
+.cbtn svg{width:15px;height:15px;}
+.pbtn{width:62px;height:62px;border-radius:50%;border:none;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.pbtn svg{fill:#fff;width:22px;height:22px;}
+.descbox{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r2);padding:1rem;font-size:14px;line-height:1.8;color:var(--text2);margin-bottom:.8rem;}
+.audiomode{font-size:11px;color:var(--text3);text-align:center;}
+
+#sExpired{align-items:center;justify-content:center;text-align:center;padding:2rem;}
+.exp-title{font-size:1.4rem;font-weight:700;margin-bottom:.8rem;}
+.exp-msg{font-size:14px;color:var(--text2);line-height:1.7;max-width:300px;}
+.exp-sub{font-size:12px;color:var(--text3);margin-top:1rem;line-height:1.6;}
+.exp-reset{margin-top:2rem;padding:10px 24px;border:.5px solid var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-family:Georgia,serif;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">Novum<span>Guide</span></div>
+    <div class="lang-picker" id="langPicker"></div>
+  </header>
+  <div id="timerBar"><div id="timerFill"></div></div>
+  <div id="timerLabel"></div>
+
+  <div class="screen on" id="sInput">
+    <div class="hint" id="hintTxt"></div>
+    <div class="digits" id="digitsRow"></div>
+    <div class="numpad" id="numpad"></div>
+    <div class="errmsg" id="errMsg"></div>
+    <button class="go" id="goBtn" disabled onclick="loadPoint()">-</button>
+  </div>
+
+  <div class="screen" id="sPlayer">
+    <button class="pback" onclick="goBack()">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      <span id="backLbl"></span>
+    </button>
+    <div class="photo-wrap">
+      <img id="photoImg" alt="" onload="this.style.display='block'" onerror="showPhotoPlaceholder()"/>
+      <div class="photo-placeholder" id="photoPlaceholder"><span id="noPhotoLbl"></span></div>
+    </div>
+    <div class="ptag" id="pTag"></div>
+    <div class="ptitle" id="pTitle"></div>
+    <div class="pcat" id="pCat"></div>
+    <div class="waverow" id="waveRow" onclick="seekClick(event)"></div>
+    <div class="ptrack" onclick="seekClick(event)"><div class="pfill" id="pFill" style="width:0%"></div></div>
+    <div class="trow">
+      <span id="tCur">0:00</span>
+      <div class="statrow"><div class="dot off" id="statDot"></div><span id="statTxt"></span></div>
+      <span id="tTot">0:00</span>
+    </div>
+    <div class="controls">
+      <button class="cbtn" onclick="skip(-15)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        <span>15</span>
+      </button>
+      <button class="pbtn" onclick="togglePlay()">
+        <svg id="playIco" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+      </button>
+      <button class="cbtn" onclick="skip(15)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.49-3.5"/></svg>
+        <span>15</span>
+      </button>
+    </div>
+    <div class="descbox" id="pDesc"></div>
+    <div class="audiomode" id="audioMode"></div>
+  </div>
+
+  <div class="screen" id="sExpired">
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="1" style="margin-bottom:1.5rem;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <div class="exp-title" id="expTitle"></div>
+    <div class="exp-msg" id="expMsg"></div>
+    <div class="exp-sub" id="expSub"></div>
+    <button class="exp-reset" onclick="resetSession()">&#8635; Reset sessione</button>
+  </div>
+</div>
+
+<script>
+/* ===========================================
+   CONFIGURAZIONE GENERALE
+   Modifica solo questa sezione!
+=========================================== */
+
+// Nome del museo / app (appare in alto a sinistra)
+var APP_NAME_1 = 'Novum';
+var APP_NAME_2 = 'Guide';
+
+// Durata sessione in ORE (es. 4 = 4 ore)
+var SESSION_HOURS = 1;
+
+// Numero di cifre del codice (3 o 4)
+var CODE_LENGTH = 4;
+
+/* -------------------------------------------
+   LINGUE DISPONIBILI
+   Per aggiungere una lingua:
+   1. Aggiungi una riga qui sotto con il codice
+      lingua e le traduzioni
+   2. Aggiungi il tasto nel lang-picker
+      (si aggiorna automaticamente)
+   3. Per ogni punto del database aggiungi
+      il campo con lo stesso codice lingua
+
+   Codici lingua standard:
+   it=Italiano, en=English, fr=Francais,
+   de=Deutsch, es=Espanol, pt=Portugues,
+   zh=Cinese, ja=Giapponese, ru=Russo
+------------------------------------------- */
+var LINGUE = {
+  'it': {
+    nome: 'IT',
+    tts: 'it-IT',
+    hint: 'Inserisci il codice a 4 cifre',
+    go: 'Ascolta',
+    back: 'Torna al codice',
+    playing: 'In riproduzione',
+    paused: 'In pausa',
+    notfound: 'Codice non trovato. Riprova.',
+    point: 'Punto',
+    mp3: 'Audio professionale',
+    tts_label: 'Lettura vocale',
+    nophoto: 'Nessuna foto disponibile',
+    timer: 'Accesso rimanente: ',
+    expTitle: 'Sessione scaduta',
+    expMsg: "Il tuo accesso all'audioguida e' terminato. Grazie per la visita!",
+    expSub: "Per una nuova visita richiedi un nuovo accesso all'ingresso."
+  },
+  'en': {
+    nome: 'EN',
+    tts: 'en-US',
+    hint: 'Enter the 4-digit code',
+    go: 'Listen',
+    back: 'Back to code',
+    playing: 'Playing',
+    paused: 'Paused',
+    notfound: 'Code not found. Try again.',
+    point: 'Stop',
+    mp3: 'Professional audio',
+    tts_label: 'Browser voice',
+    nophoto: 'No photo available',
+    timer: 'Remaining: ',
+    expTitle: 'Session expired',
+    expMsg: 'Your audio guide access has ended. Thank you for your visit!',
+    expSub: 'For a new visit, please request new access at the entrance.'
+  }
+  /* Per aggiungere una lingua copia questo blocco:
+  ,'fr': {
+    nome: 'FR',
+    tts: 'fr-FR',
+    hint: 'Entrez le code a 4 chiffres',
+    go: 'Ecouter',
+    back: 'Retour au code',
+    playing: 'En lecture',
+    paused: 'En pause',
+    notfound: 'Code introuvable. Reessayez.',
+    point: 'Point',
+    mp3: 'Audio professionnel',
+    tts_label: 'Lecture vocale',
+    nophoto: 'Aucune photo disponible',
+    timer: 'Acces restant: ',
+    expTitle: 'Session expiree',
+    expMsg: 'Votre acces a l audioguide est termine. Merci pour votre visite!',
+    expSub: 'Pour une nouvelle visite, demandez un nouvel acces a l entree.'
+  }
+  */
+};
+
+/* -------------------------------------------
+   DATABASE PUNTI
+   -----------------------------------------------
+   STRUTTURA CARTELLE SU NETLIFY:
+   audioguida/
+     index.html
+     audio/
+       0001-it.mp3
+       0001-en.mp3
+       0002-it.mp3 ...
+     foto/
+       0001.jpg
+       0002.jpg ...
+
+   COME AGGIUNGERE UN PUNTO:
+   Copia il blocco template e incollalo
+   prima della riga finale con }
+   Poi compila:
+   - chiave "0006"  = codice che digita il visitatore
+   - photo          = percorso foto, "" se non hai foto
+   - audio          = percorso base MP3 senza lingua
+                      il sistema aggiunge -it.mp3 / -en.mp3
+                      "" se non hai ancora l'audio
+   - dur            = durata in secondi del file audio
+   - it / en / ...  = titolo, categoria, descrizione
+                      per ogni lingua che hai in LINGUE
+
+   TEMPLATE:
+   ,"0006": {
+     photo: "foto/0006.jpg",
+     audio: "audio/0006",
+     dur: 70,
+     it: { title: "Titolo", cat: "Categoria - Anno", desc: "Descrizione..." },
+     en: { title: "Title",  cat: "Category - Year",  desc: "Description..." }
+   }
+------------------------------------------- */
+var POINTS = {
+  "0001": {
+    photo: "foto/001.jpg",
+    audio: "audio/001",
+    dur: 80,
+    it: { title: "La Chiesa", cat: "", desc: "" },
+    en: { title: "The Church", cat: "", desc: "" }
+  },
+  "0002": {
+    photo: "foto/001.jpg",
+    audio: "audio/002",
+    dur: 75,
+    it: { title: "La Confraternita", cat: "", desc: "" },
+    en: { title: "The Confraternity", cat: "", desc: "" }
+  },
+  "0003": {
+    photo: "foto/003.jpg",
+    audio: "audio/003",
+    dur: 70,
+    it: { title: "La Storia dei Santi: Maria Maddalena", cat: "", desc: "" },
+    en: { title: "The Story of the Saints: Mary Magdalene", cat: "", desc: "" }
+  },
+  "0101": {
+    photo: "foto/101.jpg",
+    audio: "audio/101",
+    dur: 80,
+    it: { title: "La Chiesa", cat: "", desc: "" },
+    en: { title: "The Church", cat: "", desc: "" }
+  },
+  "0102": {
+    photo: "foto/102.jpg",
+    audio: "audio/102",
+    dur: 75,
+    it: { title: "La Storia dei Santi: Madonna Addolorata", cat: "", desc: "" },
+    en: { title: "The Story of the Saints: Our Lady of Sorrows", cat: "", desc: "" }
+  }
+  /* AGGIUNGI ALTRI PUNTI QUI SOPRA */
+};
+
+/* ===========================================
+   DA QUI IN POI NON MODIFICARE
+=========================================== */
+var lang = Object.keys(LINGUE)[0];
+var code = '';
+var playing = false;
+var prog = 0;
+var dur = 60;
+var ticker = null;
+var audioEl = null;
+var usingMP3 = false;
+var sessionEnd = null;
+var sessionTicker = null;
+var BARS = 50;
+var SESSION_MS = SESSION_HOURS * 3600 * 1000;
+var WARN_MS = 30 * 60 * 1000;
+var DANGER_MS = 10 * 60 * 1000;
+var STORAGE_KEY = 'ag_sess';
+
+function init() {
+  // Logo
+  var logo = document.querySelector('.logo');
+  if (logo) logo.innerHTML = APP_NAME_1 + '<span>' + APP_NAME_2 + '</span>';
+
+  // Tasti lingua
+  var picker = document.getElementById('langPicker');
+  picker.innerHTML = '';
+  Object.keys(LINGUE).forEach(function(l) {
+    var b = document.createElement('button');
+    b.className = 'lbtn' + (l === lang ? ' on' : '');
+    b.textContent = LINGUE[l].nome;
+    b.onclick = function() { setLang(l); };
+    picker.appendChild(b);
+  });
+
+  // Caselle codice dinamiche
+  buildDigits();
+  buildNumpad();
+  buildWaveform();
+  setLang(lang);
+  loadSession();
+}
+
+function buildDigits() {
+  var row = document.getElementById('digitsRow');
+  row.innerHTML = '';
+  for (var i = 0; i < CODE_LENGTH; i++) {
+    var d = document.createElement('div');
+    d.className = 'dbox' + (i === 0 ? ' cur' : '');
+    d.id = 'd' + i;
+    d.innerHTML = '&nbsp;';
+    row.appendChild(d);
+  }
+}
+
+function buildNumpad() {
+  var np = document.getElementById('numpad');
+  np.innerHTML = '';
+  ['1','2','3','4','5','6','7','8','9','C','0','X'].forEach(function(k) {
+    var b = document.createElement('button');
+    b.className = 'nk' + (k === 'C' || k === 'X' ? ' sm' : '');
+    b.textContent = k === 'X' ? '\u232b' : k;
+    b.onclick = function() { pressKey(k === 'X' ? 'del' : k); };
+    np.appendChild(b);
+  });
+}
+
+function buildWaveform() {
+  var wr = document.getElementById('waveRow');
+  wr.innerHTML = '';
+  for (var i = 0; i < BARS; i++) {
+    var h = 8 + Math.round(Math.abs(Math.sin(i * .45 + 1.2)) * 22 + Math.random() * 10);
+    var d = document.createElement('div');
+    d.className = 'wb';
+    d.style.height = h + 'px';
+    d.id = 'wb' + i;
+    wr.appendChild(d);
+  }
+}
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lbtn').forEach(function(b) {
+    b.classList.toggle('on', b.textContent === LINGUE[l].nome);
+  });
+  var t = LINGUE[lang];
+  document.getElementById('hintTxt').textContent = t.hint;
+  document.getElementById('goBtn').textContent = t.go;
+  document.getElementById('backLbl').textContent = t.back;
+  document.getElementById('noPhotoLbl').textContent = t.nophoto;
+  updateStatUI();
+}
+
+function loadSession() {
+  try {
+    var s = localStorage.getItem(STORAGE_KEY);
+    if (s) {
+      sessionEnd = parseInt(s);
+      if (Date.now() >= sessionEnd) { showExpired(); return; }
+    }
+  } catch(e) { sessionEnd = null; }
+  if (sessionEnd) startSessionTicker();
+}
+
+function startSession() {
+  if (sessionEnd) return;
+  sessionEnd = Date.now() + SESSION_MS;
+  try { localStorage.setItem(STORAGE_KEY, sessionEnd); } catch(e) {}
+  startSessionTicker();
+}
+
+function startSessionTicker() {
+  if (sessionTicker) clearInterval(sessionTicker);
+  sessionTicker = setInterval(function() {
+    var rem = sessionEnd - Date.now();
+    if (rem <= 0) { clearInterval(sessionTicker); stopAll(); showExpired(); return; }
+    updateTimerUI(rem);
+  }, 1000);
+  updateTimerUI(sessionEnd - Date.now());
+}
+
+function updateTimerUI(rem) {
+  var fill = document.getElementById('timerFill');
+  var label = document.getElementById('timerLabel');
+  var pct = Math.max(0, rem / SESSION_MS * 100);
+  fill.style.width = pct + '%';
+  var h = Math.floor(rem / 3600000);
+  var m = Math.floor((rem % 3600000) / 60000);
+  var s = Math.floor((rem % 60000) / 1000);
+  var str = (h > 0 ? h + 'h ' : '') + pad(m) + 'm ' + pad(s) + 's';
+  label.textContent = LINGUE[lang].timer + str;
+  if (rem <= DANGER_MS) { fill.style.background = '#e05555'; label.style.color = '#e05555'; }
+  else if (rem <= WARN_MS) { fill.style.background = '#e0843a'; label.style.color = '#e0843a'; }
+  else { fill.style.background = 'var(--accent)'; label.style.color = 'var(--text3)'; }
+}
+
+function showExpired() {
+  stopAll();
+  var t = LINGUE[lang];
+  document.getElementById('expTitle').textContent = t.expTitle;
+  document.getElementById('expMsg').textContent = t.expMsg;
+  document.getElementById('expSub').textContent = t.expSub;
+  show('sExpired');
+  document.getElementById('timerBar').style.display = 'none';
+  document.getElementById('timerLabel').style.display = 'none';
+}
+
+function resetSession() {
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  sessionEnd = null;
+  if (sessionTicker) clearInterval(sessionTicker);
+  document.getElementById('timerBar').style.display = '';
+  document.getElementById('timerLabel').style.display = '';
+  document.getElementById('timerFill').style.width = '100%';
+  document.getElementById('timerLabel').textContent = '';
+  show('sInput');
+}
+
+function pressKey(k) {
+  document.getElementById('errMsg').textContent = '';
+  if (k === 'del') code = code.slice(0, -1);
+  else if (k === 'C') code = '';
+  else if (code.length < CODE_LENGTH) code += k;
+  renderDigits();
+}
+
+function renderDigits() {
+  for (var i = 0; i < CODE_LENGTH; i++) {
+    var el = document.getElementById('d' + i);
+    if (!el) continue;
+    el.textContent = code[i] || '\u00a0';
+    el.className = 'dbox' + (i === code.length ? ' cur' : code[i] ? ' full' : '');
+  }
+  document.getElementById('goBtn').disabled = code.length < CODE_LENGTH;
+}
+
+function loadPoint() {
+  if (sessionEnd && Date.now() >= sessionEnd) { showExpired(); return; }
+  var pt = POINTS[code];
+  if (!pt) { document.getElementById('errMsg').textContent = LINGUE[lang].notfound; return; }
+  startSession();
+  var data = pt[lang] || pt[Object.keys(LINGUE)[0]];
+  dur = pt.dur || 60; prog = 0; playing = false;
+  document.getElementById('pTag').textContent = LINGUE[lang].point + ' ' + code;
+  document.getElementById('pTitle').textContent = data.title || '';
+  document.getElementById('pCat').textContent = data.cat || '';
+  document.getElementById('pDesc').textContent = data.desc || '';
+  document.getElementById('tTot').textContent = fmt(dur);
+  document.getElementById('tCur').textContent = '0:00';
+  document.getElementById('pFill').style.width = '0%';
+  resetWave(); updateStatUI();
+  loadPhoto(pt.photo);
+  stopAll();
+  show('sPlayer');
+  if (pt.audio) tryMP3(pt.audio + '-' + lang + '.mp3', data.desc || '');
+  else if (data.desc) startTTS(data.desc);
+}
+
+function loadPhoto(path) {
+  var img = document.getElementById('photoImg');
+  var ph = document.getElementById('photoPlaceholder');
+  if (path) {
+    img.style.display = 'none'; ph.style.display = 'none';
+    img.src = path;
+  } else { showPhotoPlaceholder(); }
+}
+
+function showPhotoPlaceholder() {
+  document.getElementById('photoImg').style.display = 'none';
+  document.getElementById('photoPlaceholder').style.display = 'flex';
+}
+
+function tryMP3(url, fallback) {
+  usingMP3 = false;
+  var a = new Audio();
+  a.src = url; a.preload = 'auto';
+  a.oncanplaythrough = function() {
+    usingMP3 = true; audioEl = a;
+    dur = Math.round(a.duration) || dur;
+    document.getElementById('tTot').textContent = fmt(dur);
+    document.getElementById('audioMode').textContent = LINGUE[lang].mp3;
+    a.play(); playing = true; updateStatUI(); startTicker();
+    a.onended = function() { playing = false; prog = dur; updateStatUI(); clearInterval(ticker); refreshProg(); };
+    a.onpause = function() { playing = false; updateStatUI(); };
+    a.onplay = function() { playing = true; updateStatUI(); };
+  };
+  a.onerror = function() { if (fallback) startTTS(fallback); };
+  a.load();
+}
+
+function startTTS(text) {
+  if (!('speechSynthesis' in window) || !text) return;
+  usingMP3 = false;
+  document.getElementById('audioMode').textContent = LINGUE[lang].tts_label;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = LINGUE[lang].tts; u.rate = 0.92;
+  u.onstart = function() { playing = true; updateStatUI(); startTicker(); };
+  u.onend = function() { playing = false; prog = dur; updateStatUI(); clearInterval(ticker); refreshProg(); };
+  u.onpause = function() { playing = false; updateStatUI(); };
+  u.onresume = function() { playing = true; updateStatUI(); };
+  u.onerror = function() { playing = false; updateStatUI(); };
+  window.speechSynthesis.speak(u);
+}
+
+function stopAll() {
+  if (audioEl) { audioEl.pause(); audioEl.src = ''; audioEl = null; }
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  clearInterval(ticker); playing = false; usingMP3 = false;
+}
+
+function togglePlay() {
+  if (usingMP3 && audioEl) {
+    if (playing) audioEl.pause(); else audioEl.play();
+  } else {
+    if (!('speechSynthesis' in window)) return;
+    if (playing) { window.speechSynthesis.pause(); clearInterval(ticker); }
+    else { window.speechSynthesis.resume(); startTicker(); }
+    playing = !playing; updateStatUI();
+  }
+}
+
+function skip(s) {
+  prog = Math.max(0, Math.min(dur, prog + s));
+  if (usingMP3 && audioEl) audioEl.currentTime = prog;
+  refreshProg();
+}
+
+function seekClick(e) {
+  var r = e.currentTarget.getBoundingClientRect();
+  var pct = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  prog = Math.round(pct * dur);
+  if (usingMP3 && audioEl) audioEl.currentTime = prog;
+  refreshProg();
+}
+
+function startTicker() {
+  clearInterval(ticker);
+  ticker = setInterval(function() {
+    if (!playing) return;
+    if (usingMP3 && audioEl) prog = Math.round(audioEl.currentTime);
+    else prog = Math.min(prog + 1, dur);
+    refreshProg();
+    if (prog >= dur) { clearInterval(ticker); playing = false; updateStatUI(); }
+  }, 1000);
+}
+
+function refreshProg() {
+  var pct = dur > 0 ? prog / dur : 0;
+  document.getElementById('pFill').style.width = (pct * 100).toFixed(1) + '%';
+  document.getElementById('tCur').textContent = fmt(prog);
+  var pl = Math.floor(pct * BARS);
+  for (var i = 0; i < BARS; i++) {
+    var el = document.getElementById('wb' + i);
+    if (el) el.className = 'wb' + (i < pl - 1 ? ' p' : i === pl ? ' c' : '');
+  }
+}
+
+function resetWave() {
+  for (var i = 0; i < BARS; i++) {
+    var el = document.getElementById('wb' + i);
+    if (el) el.className = 'wb';
+  }
+}
+
+function updateStatUI() {
+  var t = LINGUE[lang];
+  var stxt = document.getElementById('statTxt');
+  var sdot = document.getElementById('statDot');
+  var ico = document.getElementById('playIco');
+  if (stxt) stxt.textContent = playing ? t.playing : t.paused;
+  if (sdot) sdot.className = 'dot' + (playing ? '' : ' off');
+  if (ico) {
+    ico.innerHTML = playing
+      ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+      : '<polygon points="5,3 19,12 5,21"/>';
+  }
+}
+
+function goBack() {
+  stopAll(); prog = 0; playing = false; code = '';
+  renderDigits();
+  document.getElementById('errMsg').textContent = '';
+  document.getElementById('audioMode').textContent = '';
+  show('sInput');
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('on'); });
+  document.getElementById(id).classList.add('on');
+}
+
+function fmt(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + pad(s % 60); }
+function pad(n) { return String(n).padStart(2, '0'); }
+
+init();
+</script>
+</body>
+</html>
