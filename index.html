@@ -218,7 +218,6 @@ var LINGUE = {
     expMsg: 'Your audio guide access has ended. Thank you for your visit!',
     expSub: 'For a new visit, please request new access at the entrance.'
   }
-  /* Per aggiungere una lingua copia questo blocco:
   ,'fr': {
     nome: 'FR',
     tts: 'fr-FR',
@@ -237,7 +236,48 @@ var LINGUE = {
     expMsg: 'Votre acces a l audioguide est termine. Merci pour votre visite!',
     expSub: 'Pour une nouvelle visite, demandez un nouvel acces a l entree.'
   }
-  */
+'es': {
+    nome: 'ES',
+    tts: 'es-ES',
+    hint: 'Introduzca el código de 4 dígitos',
+    go: 'Escuchar',
+    back: 'Volver al código',
+    playing: 'Reproduciendo',
+    paused: 'Pausado',
+    notfound: 'Código no encontrado. Inténtelo de nuevo.',
+    point: 'Punto',
+    mp3: 'Audio profesional',
+    tts_label: 'Lectura por voz',
+    nophoto: 'No hay foto disponible',
+    timer: 'Acceso restante: ',
+    expTitle: 'Sesión caducada',
+    expMsg: 'Su acceso a la audioguía ha finalizado. ¡Gracias por su visita!',
+    expSub: 'Para una nueva visita, solicite un nuevo acceso en la entrada.'
+  }
+'de': {
+    nome: 'DE',
+    tts: 'de-DE',
+    hint: 'Geben Sie den 4-stelligen Code ein',
+    go: 'Anhören',
+    back: 'Zurück zum Code',
+    playing: 'Wird abgespielt',
+    paused: 'Pausiert',
+    notfound: 'Code nicht gefunden. Bitte versuchen Sie es erneut.',
+    point: 'Punkt',
+    mp3: 'Professionelles Audio',
+    tts_label: 'Sprachwiedergabe',
+    nophoto: 'Kein Foto verfügbar',
+    timer: 'Verbleibender Zugang: ',
+    expTitle: 'Sitzung abgelaufen',
+    expMsg: 'Ihr Zugang zum Audioguide ist beendet. Vielen Dank für Ihren Besuch!',
+    expSub: 'Für einen neuen Besuch fragen Sie bitte am Eingang nach neuem Zugang.'
+  }
+
+Fammi sapere se serve anche l'inglese per completare tutte le lingue!
+
+
+
+
 };
 
 /* -------------------------------------------
@@ -278,34 +318,40 @@ var LINGUE = {
 ------------------------------------------- */
 var POINTS = {
   "0001": {
-    photo: "foto/001.jpg",
-    audio: "audio/001",
+    photo: "foto/0001.jpg",
+    audio: "audio/0001",
     dur: 80,
     it: { title: "La Chiesa", cat: "", desc: "" },
-    en: { title: "The Church", cat: "", desc: "" }
+    en: { title: "The Church", cat: "", desc: "" },
+    fr: { title: "L'église", cat: "", desc: "" },
+    sp: { title: "La iglesia", cat: "", desc: "" },
+    de: { title: "Die Kirche", cat: "", desc: "" },
   },
   "0002": {
-    photo: "foto/001.jpg",
-    audio: "audio/002",
+    photo: "foto/0001.jpg",
+    audio: "audio/0002",
     dur: 75,
-    it: { title: "La Confraternita", cat: "", desc: "" },
-    en: { title: "The Confraternity", cat: "", desc: "" }
+    it: { title: "La Storia dei Santi: San Giacomo", cat: "", desc: "" },
+    en: { title: "The Story of the Saints: Saint James", cat: "", desc: "" };
+    fr: { title: "L'Histoire des Saints: Saint Jacques", cat: "", desc: "" },
+    sp: { title: "La Historia de los Santos: Santiago", cat: "", desc: "" },
+    de: { title: "Die Geschichte der Heiligen: Sankt Jakobus", cat: "", desc: "" },
   },
-  "0003": {
+  "0101": {
     photo: "foto/003.jpg",
     audio: "audio/003",
     dur: 70,
     it: { title: "La Storia dei Santi: Maria Maddalena", cat: "", desc: "" },
     en: { title: "The Story of the Saints: Mary Magdalene", cat: "", desc: "" }
   },
-  "0101": {
+  "0102": {
     photo: "foto/101.jpg",
     audio: "audio/101",
     dur: 80,
     it: { title: "La Chiesa", cat: "", desc: "" },
     en: { title: "The Church", cat: "", desc: "" }
   },
-  "0102": {
+  "0203": {
     photo: "foto/102.jpg",
     audio: "audio/102",
     dur: 75,
