@@ -4,107 +4,224 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="theme-color" content="#18667d"/>
+<meta name="theme-color" content="#0a0a12"/>
 <title>Novum Guide</title>
 <style>
 :root {
-  --bg: #307a8f;
-  --bg2: #abd6e3;
-  --bg3: #1e1e1e;
-  --border: #18667d;
-  --border2: #18667d;
-  --text: #000000;
-  --text2: #18667d;
-  --text3: #18667d;
-  --accent: #18667d;
+  --bg:#307a8f; --bg2:#abd6e3; --bg3:#1e6a7d;
+  --acc:#0d3d4a; --acc2:rgba(13,61,74,.15); --bord:rgba(13,61,74,.4);
+  --txt:#000000; --txt2:#0d3d4a;
   --red: #c0392b;
   --green: #5db87a;
-  --orange: #e0843a;
-  --r: 10px;
-  --r2: 16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:Georgia,serif;overflow:hidden;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:Georgia,'Times New Roman',serif;}
+button{cursor:pointer;border:none;outline:none;font-family:inherit;}
 body{display:flex;flex-direction:column;align-items:center;}
 #app{width:100%;max-width:480px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
 
-header{padding:1rem 1.4rem .7rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.logo{font-size:1.3rem;font-weight:700;letter-spacing:.02em;}
-.logo span{color:var(--accent);}
-.lang-picker{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:60%;}
-.lbtn{padding:4px 10px;border-radius:20px;border:.5px solid var(--border2);background:transparent;color:var(--text2);font-family:Georgia,serif;font-size:11px;cursor:pointer;transition:all .2s;}
-.lbtn.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+/* ── HEADER ── */
+#lang-header{background:var(--bg2);border-bottom:1px solid var(--bord);padding:.5rem 1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+#sInput #lang-header{display:none;}
+.logo{font-size:1rem;font-weight:700;letter-spacing:.1em;color:var(--acc);}
 
-#timerBar{height:2px;background:var(--border);flex-shrink:0;}
-#timerFill{height:100%;background:var(--accent);width:100%;}
-#timerLabel{text-align:center;font-size:11px;color:var(--text3);padding:3px 0;flex-shrink:0;font-family:Georgia,serif;}
+/* ── LOGO INPUT ── */
+.input-top{text-align:center;margin-bottom:1.2rem;}
+.input-logo{font-size:2rem;font-weight:700;color:var(--txt);letter-spacing:.12em;}
 
-.screen{display:none;flex:1;overflow-y:auto;padding:.8rem 1.4rem 2rem;flex-direction:column;}
+/* ── TASTI LINGUA (dentro sInput) ── */
+.lang-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;width:min(92vw,300px);margin-bottom:1.6rem;}
+.lbtn{padding:.55rem .3rem;border-radius:10px;border:1.5px solid rgba(255,255,255,.08);background:var(--bg2);color:var(--txt2);font-family:Georgia,serif;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:.25rem;}
+.lbtn-flag{font-size:1.4rem;line-height:1;}
+.lbtn-name{font-size:.58rem;color:var(--txt2);letter-spacing:.04em;}
+.lbtn.on{border-color:var(--acc);background:rgba(13,61,74,.18);}
+.lbtn.on .lbtn-name{color:var(--acc);}
+.lbtn:active{transform:scale(.92);}
+
+/* ── TIMER ── */
+#timerBar{height:3px;background:var(--bg2);flex-shrink:0;}
+#timerFill{height:100%;background:var(--acc);width:100%;transition:width .9s linear;}
+#timerLabel{text-align:center;font-size:.65rem;color:var(--txt2);padding:.25rem 0;flex-shrink:0;letter-spacing:.07em;}
+
+/* ── SCHERMATE ── */
+.screen{position:relative;display:none;flex:1;overflow-y:auto;flex-direction:column;align-items:center;justify-content:center;padding:1rem;}
 .screen.on{display:flex;}
 
-.hint{font-size:12px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.2rem;text-align:center;}
-.digits{display:flex;gap:8px;justify-content:center;margin-bottom:1.5rem;}
-.dbox{width:58px;height:74px;border:1.5px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--text);background:var(--bg2);}
-.dbox.cur{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,102,125,.2);}
-.dbox.full{background:#d4eaf2;}
-.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;align-self:center;width:100%;}
-.nk{height:58px;border:.5px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;}
-.nk:active{background:#c2dde8;}
-.nk.sm{font-size:13px;color:var(--text2);}
-.go{width:100%;max-width:260px;align-self:center;margin-top:12px;padding:14px;border:none;border-radius:var(--r);background:var(--accent);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:Georgia,serif;}
-.go:disabled{opacity:.3;cursor:not-allowed;}
-.errmsg{text-align:center;font-size:12px;color:var(--red);min-height:18px;margin-top:6px;}
+/* ── SCHERMATA INPUT (stile D2 NovumGuide+) ── */
+#sInput{background:var(--bg);}
+.input-top{text-align:center;margin-bottom:1.8rem;}
+.input-logo{font-size:2rem;font-weight:700;color:var(--acc);letter-spacing:.12em;margin-bottom:.3rem;}
+.input-sub{font-size:.72rem;color:var(--txt2);letter-spacing:.18em;text-transform:uppercase;}
+.hint{font-size:.78rem;color:var(--txt2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.1rem;text-align:center;}
 
-.pback{display:flex;align-items:center;gap:8px;color:var(--text2);font-size:13px;cursor:pointer;margin-bottom:1rem;border:none;background:transparent;padding:0;font-family:Georgia,serif;}
-.photo-wrap{width:100%;aspect-ratio:16/9;border-radius:var(--r2);overflow:hidden;margin-bottom:1rem;background:var(--bg3);}
+.code-box{display:flex;flex-direction:column;align-items:center;gap:.9rem;width:min(92vw,300px);}
+.digits{display:flex;gap:.5rem;justify-content:center;}
+.dbox{width:52px;height:62px;border:1.5px solid var(--bord);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--acc);background:var(--bg2);letter-spacing:0;}
+.dbox.cur{border-color:var(--acc);box-shadow:0 0 0 2px rgba(13,61,74,.2);}
+.dbox.full{background:#d4eaf2;border-color:var(--bord);}
+
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;width:100%;}
+.nk{background:var(--bg2);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.9rem;font-size:1.25rem;color:var(--txt);transition:.12s;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;}
+.nk:active{transform:scale(.9);background:var(--acc2);}
+.nk.sm{font-size:.9rem;color:var(--txt2);}
+.go{width:100%;background:var(--acc);color:#fff;border-radius:50px;padding:.85rem;font-size:.95rem;font-weight:700;letter-spacing:.07em;transition:.15s;}
+.go:active{opacity:.8;}
+.go:disabled{opacity:.3;cursor:not-allowed;}
+.errmsg{font-size:.75rem;color:var(--red);min-height:1em;text-align:center;}
+
+/* ── PLAYER ── */
+#sPlayer{align-items:stretch;justify-content:flex-start;padding:.8rem 1rem 2rem;}
+.pback{display:flex;align-items:center;gap:6px;color:var(--txt2);font-size:.82rem;cursor:pointer;margin-bottom:.9rem;border:none;background:transparent;padding:0;font-family:Georgia,serif;}
+.pback svg{flex-shrink:0;}
+.photo-wrap{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin-bottom:.9rem;background:var(--bg2);border:1px solid var(--bord);}
 .photo-wrap img{width:100%;height:100%;object-fit:cover;display:none;}
 .photo-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
-.photo-placeholder span{font-size:11px;color:rgba(255,255,255,.4);}
-.ptag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
-.ptitle{font-size:1.4rem;font-weight:700;line-height:1.2;margin-bottom:5px;}
-.pcat{font-size:12px;color:var(--text3);margin-bottom:1rem;padding-bottom:1rem;border-bottom:.5px solid var(--border);}
+.photo-placeholder span{font-size:.75rem;color:var(--txt2);}
+.ptag{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--acc);margin-bottom:.25rem;}
+.ptitle{font-size:1.1rem;font-weight:700;line-height:1.2;margin-bottom:.3rem;}
+.pcat{font-size:.78rem;color:var(--txt2);margin-bottom:.9rem;padding-bottom:.9rem;border-bottom:1px solid var(--bord);}
 .waverow{display:flex;align-items:flex-end;gap:2px;height:40px;margin-bottom:6px;cursor:pointer;}
-.wb{flex:1;border-radius:2px;background:rgba(0,0,0,.1);}
-.wb.p{background:var(--accent);}
-.wb.c{background:rgba(24,102,125,.4);}
-.ptrack{height:3px;background:var(--border2);border-radius:2px;cursor:pointer;margin-bottom:1rem;}
-.pfill{height:100%;background:var(--accent);border-radius:2px;}
-.trow{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text3);margin-bottom:6px;}
-.statrow{display:flex;align-items:center;gap:6px;}
+.wb{flex:1;border-radius:2px;background:rgba(201,169,110,.1);}
+.wb.p{background:var(--acc);}
+.wb.c{background:rgba(201,169,110,.35);}
+.ptrack{height:4px;background:var(--bg2);border-radius:50px;cursor:pointer;margin-bottom:.7rem;}
+.pfill{height:100%;background:var(--acc);border-radius:50px;}
+.trow{display:flex;justify-content:space-between;align-items:center;font-size:.68rem;color:var(--txt2);margin-bottom:.7rem;}
+.statrow{display:flex;align-items:center;gap:5px;}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
-.dot.off{background:var(--border2);}
-.controls{display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:1.2rem;}
-.cbtn{width:44px;height:44px;border-radius:50%;border:.5px solid var(--border2);background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:11px;flex-direction:column;gap:2px;}
+.dot.off{background:var(--txt2);opacity:.4;}
+.controls{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1rem;}
+.cbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--bord);background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);font-size:.7rem;flex-direction:column;gap:2px;}
 .cbtn svg{width:15px;height:15px;}
-.pbtn{width:62px;height:62px;border-radius:50%;border:none;background:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.pbtn svg{fill:#fff;width:22px;height:22px;}
-.descbox{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r2);padding:1rem;font-size:14px;line-height:1.8;color:var(--text2);margin-bottom:.8rem;}
-.audiomode{font-size:11px;color:var(--text3);text-align:center;}
+.pbtn{width:56px;height:56px;border-radius:50%;border:none;background:var(--acc);color:#0a0a0a;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.pbtn:active{opacity:.8;}
+.pbtn svg{fill:#0a0a0a;width:20px;height:20px;}
+.descbox{background:var(--bg2);border:1px solid var(--bord);border-radius:12px;padding:.9rem 1rem;font-size:.83rem;line-height:1.8;color:var(--txt2);margin-bottom:.7rem;}
+.audiomode{font-size:.68rem;color:var(--txt2);text-align:center;letter-spacing:.06em;}
 
+/* ── SCADUTA ── */
 #sExpired{align-items:center;justify-content:center;text-align:center;padding:2rem;}
-.exp-title{font-size:1.4rem;font-weight:700;margin-bottom:.8rem;}
-.exp-msg{font-size:14px;color:var(--text2);line-height:1.7;max-width:300px;}
-.exp-sub{font-size:12px;color:var(--text3);margin-top:1rem;line-height:1.6;}
-.exp-reset{margin-top:2rem;padding:10px 24px;border:.5px solid var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-family:Georgia,serif;}
+.exp-title{font-size:1.2rem;font-weight:700;color:var(--acc);margin-bottom:.7rem;}
+.exp-msg{font-size:.83rem;color:var(--txt2);line-height:1.7;max-width:300px;}
+.exp-sub{font-size:.72rem;color:var(--txt2);margin-top:1rem;line-height:1.6;opacity:.7;}
+.exp-reset{margin-top:2rem;padding:.5rem 1.4rem;border:1px solid var(--bord);border-radius:50px;background:transparent;color:var(--txt2);font-size:.78rem;cursor:pointer;font-family:Georgia,serif;letter-spacing:.05em;}
+.exp-reset:active{background:var(--acc2);}
+
+/* ══════════════════════════════════════
+   PANNELLO ADMIN
+══════════════════════════════════════ */
+#adm-overlay{position:fixed;inset:0;background:#0d0d14;display:none;z-index:500;overflow:hidden;font-family:system-ui,sans-serif;}
+#adm-overlay.on{display:flex;flex-direction:column;}
+
+/* Login */
+#adm-login{position:absolute;inset:0;background:#0d0d14;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9rem;z-index:5;padding:2rem;}
+#adm-login.hide{display:none;}
+.adm-logo{font-size:1.4rem;font-weight:700;color:#307a8f;letter-spacing:.1em;margin-bottom:.3rem;}
+.adm-sub{font-size:.72rem;color:#666;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.8rem;}
+.adm-inp{background:#1a1a28;border:1.5px solid #333;border-radius:8px;padding:.75rem 1rem;font-size:1rem;color:#eee;width:min(100%,280px);font-family:inherit;}
+.adm-inp:focus{outline:none;border-color:#307a8f;}
+.adm-btn{background:#307a8f;color:#fff;border-radius:50px;padding:.75rem 2rem;font-size:.95rem;font-weight:700;width:min(100%,280px);letter-spacing:.05em;}
+.adm-btn:active{opacity:.8;}
+.adm-err{font-size:.75rem;color:#e07070;min-height:1.2em;text-align:center;}
+.adm-close-x{position:absolute;top:1rem;right:1rem;background:none;border:1px solid #333;border-radius:6px;color:#888;font-size:.8rem;padding:.3rem .7rem;}
+
+/* Layout principale */
+#adm-main{display:flex;flex-direction:column;height:100%;background:#0d0d14;}
+#adm-hdr{background:#12121e;border-bottom:1px solid #2a2a3a;padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.adm-title{font-size:1rem;font-weight:700;color:#307a8f;letter-spacing:.08em;}
+.adm-hdr-btns{display:flex;gap:.4rem;}
+.adm-hbtn{background:none;border:1px solid #333;border-radius:6px;color:#aaa;font-size:.72rem;padding:.3rem .6rem;}
+.adm-hbtn.primary{background:#307a8f;border-color:#307a8f;color:#fff;font-weight:700;}
+.adm-hbtn.danger{border-color:#803030;color:#e07070;}
+.adm-hbtn:active{opacity:.7;}
+
+/* Tab */
+#adm-tabs{display:flex;background:#0d0d14;border-bottom:1px solid #2a2a3a;flex-shrink:0;overflow-x:auto;}
+.adm-tab{padding:.6rem 1rem;font-size:.78rem;color:#555;letter-spacing:.06em;border-bottom:2px solid transparent;white-space:nowrap;background:none;}
+.adm-tab.sel{color:#307a8f;border-bottom-color:#307a8f;}
+
+/* Contenuto */
+#adm-body{flex:1;overflow-y:auto;padding:1rem;}
+.adm-sec{display:none;}
+.adm-sec.on{display:block;}
+.adm-sec-title{font-size:.75rem;color:#307a8f;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1rem;padding-bottom:.4rem;border-bottom:1px solid #2a2a3a;}
+
+/* Card punti */
+.adm-card{background:#12121e;border:1px solid #2a2a3a;border-radius:10px;padding:.9rem;margin-bottom:.7rem;}
+.adm-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;}
+.adm-card-code{font-size:1.1rem;font-weight:700;color:#307a8f;font-family:monospace;}
+.adm-card-title{font-size:.82rem;color:#ccc;margin-top:.1rem;}
+.adm-card-btns{display:flex;gap:.35rem;flex-shrink:0;}
+.adm-cbtn{background:none;border:1px solid #333;border-radius:6px;color:#aaa;font-size:.7rem;padding:.25rem .5rem;}
+.adm-cbtn.danger{border-color:#803030;color:#e07070;}
+.adm-cbtn:active{opacity:.7;}
+
+/* Form */
+.adm-form{display:flex;flex-direction:column;gap:.6rem;}
+.adm-row{display:flex;gap:.5rem;flex-wrap:wrap;}
+.adm-field{display:flex;flex-direction:column;gap:.2rem;flex:1;min-width:120px;}
+.adm-field.full{flex:1 0 100%;}
+.adm-label{font-size:.65rem;color:#777;letter-spacing:.08em;text-transform:uppercase;}
+.adm-input{background:#1a1a28;border:1.5px solid #2a2a3a;border-radius:6px;padding:.45rem .65rem;font-size:.83rem;color:#eee;font-family:inherit;width:100%;}
+.adm-input:focus{outline:none;border-color:#307a8f;}
+.adm-textarea{background:#1a1a28;border:1.5px solid #2a2a3a;border-radius:6px;padding:.45rem .65rem;font-size:.8rem;color:#eee;font-family:inherit;width:100%;resize:vertical;min-height:70px;}
+.adm-textarea:focus{outline:none;border-color:#307a8f;}
+.adm-lang-tabs{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.5rem;}
+.adm-ltab{padding:.3rem .7rem;border-radius:6px;border:1px solid #2a2a3a;background:none;color:#777;font-size:.72rem;}
+.adm-ltab.sel{background:#307a8f;border-color:#307a8f;color:#fff;}
+.adm-save-btn{background:#307a8f;color:#fff;border-radius:50px;padding:.65rem 1.5rem;font-size:.88rem;font-weight:700;margin-top:.4rem;align-self:flex-start;}
+.adm-save-btn:active{opacity:.8;}
+.adm-cancel-btn{background:none;border:1px solid #333;color:#888;border-radius:50px;padding:.65rem 1.2rem;font-size:.88rem;margin-top:.4rem;}
+.adm-cancel-btn:active{opacity:.7;}
+.adm-msg{font-size:.75rem;color:#5db87a;min-height:1.2em;margin-top:.3rem;}
+
+/* Colori */
+.adm-color-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;}
+.adm-color-card{background:#12121e;border:1px solid #2a2a3a;border-radius:8px;padding:.7rem;}
+.adm-color-label{font-size:.65rem;color:#777;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.4rem;}
+.adm-color-row{display:flex;align-items:center;gap:.5rem;}
+.adm-color-inp{width:36px;height:28px;border:1.5px solid #333;border-radius:5px;cursor:pointer;padding:2px;background:none;}
+.adm-color-val{font-size:.75rem;color:#aaa;font-family:monospace;}
+
+/* Backup */
+.adm-backup-area{background:#1a1a28;border:1px solid #2a2a3a;border-radius:8px;padding:.7rem;font-size:.72rem;color:#aaa;font-family:monospace;width:100%;min-height:120px;resize:vertical;}
+.adm-backup-area:focus{outline:none;border-color:#307a8f;}
+.adm-btn-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem;}
+.adm-action-btn{background:#12121e;border:1px solid #2a2a3a;border-radius:8px;color:#aaa;font-size:.8rem;padding:.55rem 1rem;}
+.adm-action-btn.primary{background:#307a8f;border-color:#307a8f;color:#fff;font-weight:700;}
+.adm-action-btn:active{opacity:.7;}
+
+/* Modal form punto */
+#adm-modal{position:absolute;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;z-index:10;overflow-y:auto;padding:1rem;}
+#adm-modal.on{display:flex;}
+.adm-modal-box{background:#12121e;border:1px solid #2a2a3a;border-radius:14px;padding:1.2rem;width:min(100%,440px);margin:auto;}
+.adm-modal-title{font-size:.9rem;font-weight:700;color:#307a8f;margin-bottom:1rem;}
 </style>
 </head>
 <body>
 <div id="app">
-  <header>
-    <div class="logo">Novum<span>Guide</span></div>
-    <div class="lang-picker" id="langPicker"></div>
-  </header>
+  <div id="lang-header" style="display:none;">
+    <div class="logo" id="logoTxt">NovumGuide</div>
+  </div>
   <div id="timerBar"><div id="timerFill"></div></div>
   <div id="timerLabel"></div>
 
+  <!-- SCHERMATA INPUT -->
   <div class="screen on" id="sInput">
-    <div class="hint" id="hintTxt"></div>
-    <div class="digits" id="digitsRow"></div>
-    <div class="numpad" id="numpad"></div>
-    <div class="errmsg" id="errMsg"></div>
-    <button class="go" id="goBtn" disabled onclick="loadPoint()">-</button>
+    <div class="input-top">
+      <div class="input-logo" id="logoInput">NovumGuide</div>
+    </div>
+    <div class="lang-picker" id="langPicker"></div>
+    <div class="code-box">
+      <div class="hint" id="hintTxt"></div>
+      <div class="digits" id="digitsRow"></div>
+      <div class="numpad" id="numpad"></div>
+      <div class="errmsg" id="errMsg"></div>
+      <button class="go" id="goBtn" disabled onclick="loadPoint()">-</button>
+    </div>
   </div>
 
+  <!-- SCHERMATA PLAYER -->
   <div class="screen" id="sPlayer">
     <button class="pback" onclick="goBack()">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
@@ -141,14 +258,128 @@ header{padding:1rem 1.4rem .7rem;display:flex;align-items:center;justify-content
     <div class="audiomode" id="audioMode"></div>
   </div>
 
+  <!-- SESSIONE SCADUTA -->
   <div class="screen" id="sExpired">
-    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="1" style="margin-bottom:1.5rem;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="rgba(48,122,143,.4)" stroke-width="1" style="margin-bottom:1.5rem;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
     <div class="exp-title" id="expTitle"></div>
     <div class="exp-msg" id="expMsg"></div>
     <div class="exp-sub" id="expSub"></div>
     <button class="exp-reset" onclick="resetSession()">&#8635; Reset sessione</button>
   </div>
 </div>
+
+<!-- ══ PANNELLO ADMIN ══ -->
+<div id="adm-overlay">
+
+  <!-- Login -->
+  <div id="adm-login">
+    <div class="adm-logo">NovumGuide</div>
+    <div class="adm-sub">Pannello Amministratore</div>
+    <input class="adm-inp" type="password" id="adm-pwd-inp" placeholder="Password" onkeydown="if(event.key==='Enter')admLogin()"/>
+    <button class="adm-btn" onclick="admLogin()">Accedi</button>
+    <div class="adm-err" id="adm-err"></div>
+    <button class="adm-close-x" onclick="admClose()">✕ Chiudi</button>
+  </div>
+
+  <!-- Pannello principale -->
+  <div id="adm-main" style="display:none;">
+    <div id="adm-hdr">
+      <div class="adm-title">NovumGuide Admin</div>
+      <div class="adm-hdr-btns">
+        <button class="adm-hbtn primary" onclick="admSaveAll()">💾 Salva</button>
+        <button class="adm-hbtn danger" onclick="admLogout()">Esci</button>
+      </div>
+    </div>
+    <div id="adm-tabs">
+      <button class="adm-tab sel" onclick="admTab('punti',this)">Punti</button>
+      <button class="adm-tab" onclick="admTab('colori',this)">Colori</button>
+      <button class="adm-tab" onclick="admTab('backup',this)">Backup</button>
+    </div>
+    <div id="adm-body">
+
+      <!-- TAB PUNTI -->
+      <div class="adm-sec on" id="adm-sec-punti">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <div class="adm-sec-title" style="margin:0;">Punti</div>
+          <button class="adm-hbtn primary" onclick="admOpenForm(null)">+ Nuovo</button>
+        </div>
+        <div id="adm-points-list"></div>
+      </div>
+
+      <!-- TAB COLORI -->
+      <div class="adm-sec" id="adm-sec-colori">
+        <div class="adm-sec-title">Colori</div>
+        <div class="adm-color-grid" id="adm-color-grid"></div>
+        <button class="adm-save-btn" style="margin-top:1rem;" onclick="admApplyColors()">Applica colori</button>
+      </div>
+
+      <!-- TAB BACKUP -->
+      <div class="adm-sec" id="adm-sec-backup">
+        <div class="adm-sec-title">Backup & Ripristino</div>
+        <p style="font-size:.78rem;color:#777;margin-bottom:.7rem;">Esporta tutti i punti come JSON o incolla un JSON per importare.</p>
+        <textarea class="adm-backup-area" id="adm-backup-txt" placeholder="JSON punti..."></textarea>
+        <div class="adm-btn-row">
+          <button class="adm-action-btn primary" onclick="admExport()">📤 Esporta</button>
+          <button class="adm-action-btn" onclick="admImport()">📥 Importa</button>
+          <button class="adm-action-btn" onclick="admCopyBackup()">📋 Copia</button>
+        </div>
+        <div class="adm-msg" id="adm-backup-msg"></div>
+        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #2a2a3a;">
+          <div class="adm-sec-title">Password admin</div>
+          <div class="adm-row">
+            <div class="adm-field">
+              <div class="adm-label">Nuova password</div>
+              <input class="adm-input" type="password" id="adm-new-pwd" placeholder="Nuova password"/>
+            </div>
+          </div>
+          <button class="adm-save-btn" style="margin-top:.5rem;" onclick="admChangePwd()">Cambia password</button>
+          <div class="adm-msg" id="adm-pwd-msg"></div>
+        </div>
+      </div>
+
+    </div><!-- /adm-body -->
+  </div><!-- /adm-main -->
+
+  <!-- Modal form punto -->
+  <div id="adm-modal">
+    <div class="adm-modal-box">
+      <div class="adm-modal-title" id="adm-modal-title">Nuovo punto</div>
+      <div class="adm-form">
+        <div class="adm-row">
+          <div class="adm-field">
+            <div class="adm-label">Codice (es. 0001)</div>
+            <input class="adm-input" id="af-code" placeholder="0001" maxlength="10"/>
+          </div>
+          <div class="adm-field">
+            <div class="adm-label">Durata audio (sec)</div>
+            <input class="adm-input" id="af-dur" type="number" placeholder="60"/>
+          </div>
+        </div>
+        <div class="adm-row">
+          <div class="adm-field full">
+            <div class="adm-label">Foto (percorso, es. foto/0001.jpg)</div>
+            <input class="adm-input" id="af-photo" placeholder="foto/0001.jpg"/>
+          </div>
+        </div>
+        <div class="adm-row">
+          <div class="adm-field full">
+            <div class="adm-label">Audio (percorso base senza lingua, es. audio/0001)</div>
+            <input class="adm-input" id="af-audio" placeholder="audio/0001"/>
+          </div>
+        </div>
+        <!-- Tabs lingua -->
+        <div class="adm-lang-tabs" id="af-lang-tabs"></div>
+        <div id="af-lang-fields"></div>
+        <div class="adm-msg" id="af-msg"></div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+          <button class="adm-save-btn" onclick="admSavePoint()">Salva punto</button>
+          <button class="adm-cancel-btn" onclick="admCloseModal()">Annulla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /adm-overlay -->
 
 <script>
 /* ===========================================
@@ -183,7 +414,7 @@ var CODE_LENGTH = 4;
 ------------------------------------------- */
 var LINGUE = {
   'it': {
-    nome: 'IT',
+    nome: 'IT', flag: '🇮🇹',
     tts: 'it-IT',
     hint: 'Inserisci il codice a 4 cifre',
     go: 'Ascolta',
@@ -201,7 +432,7 @@ var LINGUE = {
     expSub: "Per una nuova visita richiedi un nuovo accesso all'ingresso."
   },
   'en': {
-    nome: 'EN',
+    nome: 'EN', flag: '🇬🇧',
     tts: 'en-US',
     hint: 'Enter the 4-digit code',
     go: 'Listen',
@@ -219,7 +450,7 @@ var LINGUE = {
     expSub: 'For a new visit, please request new access at the entrance.'
   }
   ,'fr': {
-    nome: 'FR',
+    nome: 'FR', flag: '🇫🇷',
     tts: 'fr-FR',
     hint: 'Entrez le code a 4 chiffres',
     go: 'Ecouter',
@@ -237,7 +468,7 @@ var LINGUE = {
     expSub: 'Pour une nouvelle visite, demandez un nouvel acces a l entree.'
   },
 'es': {
-    nome: 'ES',
+    nome: 'ES', flag: '🇪🇸',
     tts: 'es-ES',
     hint: 'Introduzca el código de 4 dígitos',
     go: 'Escuchar',
@@ -255,7 +486,7 @@ var LINGUE = {
     expSub: 'Para una nueva visita, solicite un nuevo acceso en la entrada.'
   },
 'de': {
-    nome: 'DE',
+    nome: 'DE', flag: '🇩🇪',
     tts: 'de-DE',
     hint: 'Geben Sie den 4-stelligen Code ein',
     go: 'Anhören',
@@ -272,8 +503,60 @@ var LINGUE = {
     expMsg: 'Ihr Zugang zum Audioguide ist beendet. Vielen Dank für Ihren Besuch!',
     expSub: 'Für einen neuen Besuch fragen Sie bitte am Eingang nach neuem Zugang.'
   },
-
-
+  'pt': {
+    nome: 'PT', flag: '🇵🇹',
+    tts: 'pt-PT',
+    hint: 'Insira o código de 4 dígitos',
+    go: 'Ouvir',
+    back: 'Voltar ao código',
+    playing: 'A reproduzir',
+    paused: 'Em pausa',
+    notfound: 'Código não encontrado. Tente novamente.',
+    point: 'Ponto',
+    mp3: 'Áudio profissional',
+    tts_label: 'Leitura por voz',
+    nophoto: 'Nenhuma foto disponível',
+    timer: 'Acesso restante: ',
+    expTitle: 'Sessão expirada',
+    expMsg: 'O seu acesso ao audioguia terminou. Obrigado pela visita!',
+    expSub: 'Para uma nova visita, solicite um novo acesso na entrada.'
+  },
+  'zh': {
+    nome: 'ZH', flag: '🇨🇳',
+    tts: 'zh-CN',
+    hint: '请输入4位数字代码',
+    go: '收听',
+    back: '返回代码',
+    playing: '正在播放',
+    paused: '已暂停',
+    notfound: '未找到代码，请重试。',
+    point: '站点',
+    mp3: '专业音频',
+    tts_label: '语音朗读',
+    nophoto: '暂无图片',
+    timer: '剩余时间：',
+    expTitle: '会话已过期',
+    expMsg: '您的语音导览访问已结束，感谢您的参观！',
+    expSub: '如需再次参观，请在入口处申请新的访问权限。'
+  },
+  'ru': {
+    nome: 'RU', flag: '🇷🇺',
+    tts: 'ru-RU',
+    hint: 'Введите 4-значный код',
+    go: 'Слушать',
+    back: 'Вернуться к коду',
+    playing: 'Воспроизведение',
+    paused: 'Пауза',
+    notfound: 'Код не найден. Попробуйте ещё раз.',
+    point: 'Точка',
+    mp3: 'Профессиональное аудио',
+    tts_label: 'Голосовое чтение',
+    nophoto: 'Фото недоступно',
+    timer: 'Оставшееся время: ',
+    expTitle: 'Сессия истекла',
+    expMsg: 'Ваш доступ к аудиогиду завершён. Спасибо за визит!',
+    expSub: 'Для нового посещения запросите новый доступ на входе.'
+  },
 };
 
 /* -------------------------------------------
@@ -377,9 +660,11 @@ var DANGER_MS = 10 * 60 * 1000;
 var STORAGE_KEY = 'ag_sess';
 
 function init() {
-  // Logo
-  var logo = document.querySelector('.logo');
-  if (logo) logo.innerHTML = APP_NAME_1 + '<span>' + APP_NAME_2 + '</span>';
+  // Logo nell'header (player) e nella schermata input
+  ['logoTxt','logoInput'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.textContent = APP_NAME_1 + APP_NAME_2;
+  });
 
   // Tasti lingua
   var picker = document.getElementById('langPicker');
@@ -387,7 +672,8 @@ function init() {
   Object.keys(LINGUE).forEach(function(l) {
     var b = document.createElement('button');
     b.className = 'lbtn' + (l === lang ? ' on' : '');
-    b.textContent = LINGUE[l].nome;
+    b.setAttribute('data-lang', l);
+    b.innerHTML = '<span class="lbtn-flag">' + (LINGUE[l].flag || '') + '</span><span class="lbtn-name">' + LINGUE[l].nome + '</span>';
     b.onclick = function() { setLang(l); };
     picker.appendChild(b);
   });
@@ -440,7 +726,7 @@ function buildWaveform() {
 function setLang(l) {
   lang = l;
   document.querySelectorAll('.lbtn').forEach(function(b) {
-    b.classList.toggle('on', b.textContent === LINGUE[l].nome);
+    b.classList.toggle('on', b.getAttribute('data-lang') === l);
   });
   var t = LINGUE[lang];
   document.getElementById('hintTxt').textContent = t.hint;
@@ -490,7 +776,7 @@ function updateTimerUI(rem) {
   label.textContent = LINGUE[lang].timer + str;
   if (rem <= DANGER_MS) { fill.style.background = '#e05555'; label.style.color = '#e05555'; }
   else if (rem <= WARN_MS) { fill.style.background = '#e0843a'; label.style.color = '#e0843a'; }
-  else { fill.style.background = 'var(--accent)'; label.style.color = 'var(--text3)'; }
+  else { fill.style.background = 'var(--acc)'; label.style.color = 'var(--txt2)'; }
 }
 
 function showExpired() {
@@ -502,6 +788,7 @@ function showExpired() {
   show('sExpired');
   document.getElementById('timerBar').style.display = 'none';
   document.getElementById('timerLabel').style.display = 'none';
+  document.getElementById('lang-header').style.display = 'none';
 }
 
 function resetSession() {
@@ -510,6 +797,7 @@ function resetSession() {
   if (sessionTicker) clearInterval(sessionTicker);
   document.getElementById('timerBar').style.display = '';
   document.getElementById('timerLabel').style.display = '';
+  document.getElementById('lang-header').style.display = '';
   document.getElementById('timerFill').style.width = '100%';
   document.getElementById('timerLabel').textContent = '';
   show('sInput');
@@ -687,12 +975,310 @@ function goBack() {
 function show(id) {
   document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('on'); });
   document.getElementById(id).classList.add('on');
+  // Header visibile solo nel player
+  var hdr = document.getElementById('lang-header');
+  if (hdr) hdr.style.display = (id === 'sPlayer') ? '' : 'none';
 }
 
 function fmt(s) { s = Math.round(s); return Math.floor(s / 60) + ':' + pad(s % 60); }
 function pad(n) { return String(n).padStart(2, '0'); }
 
+/* ══════════════════════════════════════
+   ADMIN
+══════════════════════════════════════ */
+var ADM_KEY     = 'ng_adm_pwd';
+var ADM_DATA    = 'ng_adm_data';
+var ADM_COL     = 'ng_adm_col';
+var ADM_DEFAULT_PWD = 'admin1234';
+var admPoints   = null;   // copia modificabile dei punti
+var admEditCode = null;   // codice punto in modifica
+var admCurLang  = null;   // lingua attiva nel form
+
+// Apri admin (da URL #admin)
+function admOpen() {
+  document.getElementById('adm-overlay').classList.add('on');
+  document.getElementById('adm-login').classList.remove('hide');
+  document.getElementById('adm-main').style.display = 'none';
+  document.getElementById('adm-pwd-inp').value = '';
+  document.getElementById('adm-err').textContent = '';
+  setTimeout(function(){ document.getElementById('adm-pwd-inp').focus(); }, 200);
+}
+
+function admClose() {
+  document.getElementById('adm-overlay').classList.remove('on');
+  history.replaceState(null,'',location.pathname);
+}
+
+function admLogin() {
+  var pwd = document.getElementById('adm-pwd-inp').value;
+  var stored;
+  try { stored = localStorage.getItem(ADM_KEY) || ADM_DEFAULT_PWD; } catch(e) { stored = ADM_DEFAULT_PWD; }
+  if (pwd === stored) {
+    document.getElementById('adm-login').classList.add('hide');
+    document.getElementById('adm-main').style.display = 'flex';
+    admLoadData();
+    admRenderPoints();
+    admRenderColors();
+  } else {
+    document.getElementById('adm-err').textContent = 'Password errata.';
+  }
+}
+
+function admLogout() {
+  document.getElementById('adm-main').style.display = 'none';
+  document.getElementById('adm-login').classList.remove('hide');
+  document.getElementById('adm-pwd-inp').value = '';
+}
+
+function admLoadData() {
+  try {
+    var saved = localStorage.getItem(ADM_DATA);
+    admPoints = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(POINTS));
+  } catch(e) { admPoints = JSON.parse(JSON.stringify(POINTS)); }
+}
+
+function admSaveAll() {
+  try { localStorage.setItem(ADM_DATA, JSON.stringify(admPoints)); } catch(e) {}
+  // Applica i punti all'app live
+  POINTS = JSON.parse(JSON.stringify(admPoints));
+  admShowMsg('adm-backup-msg', '✓ Salvato!');
+  setTimeout(function(){ admShowMsg('adm-backup-msg',''); }, 2000);
+}
+
+// ── PUNTI ──
+function admRenderPoints() {
+  var list = document.getElementById('adm-points-list');
+  list.innerHTML = '';
+  var codes = Object.keys(admPoints).sort();
+  if (!codes.length) {
+    list.innerHTML = '<p style="color:#555;font-size:.8rem;text-align:center;padding:2rem 0;">Nessun punto. Clicca "+ Nuovo" per aggiungerne uno.</p>';
+    return;
+  }
+  codes.forEach(function(c) {
+    var pt = admPoints[c];
+    var firstLang = Object.keys(LINGUE)[0];
+    var d = pt[firstLang] || pt[Object.keys(pt).find(function(k){ return k !== 'photo' && k !== 'audio' && k !== 'dur'; })] || {};
+    var div = document.createElement('div');
+    div.className = 'adm-card';
+    div.innerHTML =
+      '<div class="adm-card-hdr">' +
+        '<div><div class="adm-card-code">' + c + '</div>' +
+        '<div class="adm-card-title">' + (d.title || '—') + '</div></div>' +
+        '<div class="adm-card-btns">' +
+          '<button class="adm-cbtn" onclick="admOpenForm(\'' + c + '\')">✏️ Modifica</button>' +
+          '<button class="adm-cbtn danger" onclick="admDeletePoint(\'' + c + '\')">🗑 Elimina</button>' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size:.7rem;color:#555;">' +
+        '📷 ' + (pt.photo || '—') + '&nbsp;&nbsp;🔊 ' + (pt.audio || '—') + '&nbsp;&nbsp;⏱ ' + (pt.dur || 0) + 's' +
+      '</div>';
+    list.appendChild(div);
+  });
+}
+
+function admOpenForm(code) {
+  admEditCode = code;
+  admCurLang  = Object.keys(LINGUE)[0];
+  document.getElementById('adm-modal-title').textContent = code ? 'Modifica punto ' + code : 'Nuovo punto';
+  document.getElementById('af-msg').textContent = '';
+
+  var pt = code ? admPoints[code] : {};
+  document.getElementById('af-code').value  = code || '';
+  document.getElementById('af-code').disabled = !!code;
+  document.getElementById('af-dur').value   = pt.dur || '';
+  document.getElementById('af-photo').value = pt.photo || '';
+  document.getElementById('af-audio').value = pt.audio || '';
+
+  // Tab lingue
+  var tabs = document.getElementById('af-lang-tabs');
+  tabs.innerHTML = '';
+  Object.keys(LINGUE).forEach(function(l) {
+    var b = document.createElement('button');
+    b.className = 'adm-ltab' + (l === admCurLang ? ' sel' : '');
+    b.textContent = LINGUE[l].flag + ' ' + LINGUE[l].nome;
+    b.onclick = function(){ admCurLang = l; admUpdateLangFields(pt); admHighlightLangTab(); };
+    tabs.appendChild(b);
+  });
+
+  admUpdateLangFields(pt);
+  document.getElementById('adm-modal').classList.add('on');
+}
+
+function admHighlightLangTab() {
+  var tabs = document.querySelectorAll('#af-lang-tabs .adm-ltab');
+  tabs.forEach(function(b,i){
+    b.classList.toggle('sel', Object.keys(LINGUE)[i] === admCurLang);
+  });
+}
+
+function admUpdateLangFields(pt) {
+  var l = admCurLang;
+  var d = (pt && pt[l]) || {};
+  var fields = document.getElementById('af-lang-fields');
+  fields.innerHTML =
+    '<div class="adm-form">' +
+      '<div class="adm-field full"><div class="adm-label">Titolo (' + l + ')</div>' +
+        '<input class="adm-input" id="af-title" value="' + escHtml(d.title||'') + '"/></div>' +
+      '<div class="adm-field full"><div class="adm-label">Categoria (' + l + ')</div>' +
+        '<input class="adm-input" id="af-cat" value="' + escHtml(d.cat||'') + '"/></div>' +
+      '<div class="adm-field full"><div class="adm-label">Descrizione (' + l + ')</div>' +
+        '<textarea class="adm-textarea" id="af-desc">' + escHtml(d.desc||'') + '</textarea></div>' +
+    '</div>';
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function admCollectLangFields() {
+  return {
+    title: (document.getElementById('af-title')||{value:''}).value.trim(),
+    cat:   (document.getElementById('af-cat')||{value:''}).value.trim(),
+    desc:  (document.getElementById('af-desc')||{value:''}).value.trim()
+  };
+}
+
+function admSavePoint() {
+  // Salva i campi lingua corrente nel punto
+  var code = document.getElementById('af-code').value.trim();
+  if (!code) { document.getElementById('af-msg').textContent = 'Inserisci un codice.'; return; }
+  if (!admEditCode && admPoints[code]) { document.getElementById('af-msg').textContent = 'Codice già esistente.'; return; }
+
+  if (!admPoints[code]) admPoints[code] = {};
+  var pt = admPoints[code];
+  pt.dur   = parseInt(document.getElementById('af-dur').value) || 60;
+  pt.photo = document.getElementById('af-photo').value.trim();
+  pt.audio = document.getElementById('af-audio').value.trim();
+  pt[admCurLang] = admCollectLangFields();
+
+  admEditCode = code; // per eventuali switch lingua futuri
+  admCloseModal();
+  admRenderPoints();
+  admSaveAll();
+}
+
+function admDeletePoint(code) {
+  if (!confirm('Eliminare il punto ' + code + '?')) return;
+  delete admPoints[code];
+  admRenderPoints();
+  admSaveAll();
+}
+
+function admCloseModal() {
+  document.getElementById('adm-modal').classList.remove('on');
+}
+
+// ── COLORI ──
+var ADM_COLORS = [
+  { id:'bg',   label:'Sfondo principale', css:'--bg'  },
+  { id:'bg2',  label:'Sfondo secondario', css:'--bg2' },
+  { id:'acc',  label:'Accento',           css:'--acc' },
+  { id:'txt',  label:'Testo principale',  css:'--txt' },
+  { id:'txt2', label:'Testo secondario',  css:'--txt2'},
+];
+
+function admRenderColors() {
+  var grid = document.getElementById('adm-color-grid');
+  grid.innerHTML = '';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(ADM_COL)||'{}'); } catch(e){}
+  ADM_COLORS.forEach(function(c) {
+    var cur = saved[c.css] || getComputedStyle(document.documentElement).getPropertyValue(c.css).trim() || '#ffffff';
+    var div = document.createElement('div');
+    div.className = 'adm-color-card';
+    div.innerHTML =
+      '<div class="adm-color-label">' + c.label + '</div>' +
+      '<div class="adm-color-row">' +
+        '<input class="adm-color-inp" type="color" id="adc-' + c.id + '" value="' + cur + '" oninput="document.getElementById(\'adcv-' + c.id + '\').textContent=this.value"/>' +
+        '<span class="adm-color-val" id="adcv-' + c.id + '">' + cur + '</span>' +
+      '</div>';
+    grid.appendChild(div);
+  });
+}
+
+function admApplyColors() {
+  var obj = {};
+  ADM_COLORS.forEach(function(c) {
+    var val = document.getElementById('adc-' + c.id).value;
+    document.documentElement.style.setProperty(c.css, val);
+    obj[c.css] = val;
+  });
+  try { localStorage.setItem(ADM_COL, JSON.stringify(obj)); } catch(e){}
+  admShowMsg('adm-backup-msg','✓ Colori applicati!');
+  setTimeout(function(){ admShowMsg('adm-backup-msg',''); }, 2000);
+}
+
+function admLoadColors() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(ADM_COL)||'{}');
+    Object.keys(saved).forEach(function(k){ document.documentElement.style.setProperty(k, saved[k]); });
+  } catch(e){}
+}
+
+// ── BACKUP ──
+function admExport() {
+  document.getElementById('adm-backup-txt').value = JSON.stringify(admPoints, null, 2);
+  admShowMsg('adm-backup-msg','✓ JSON pronto — copialo o scaricalo.');
+}
+
+function admImport() {
+  try {
+    var data = JSON.parse(document.getElementById('adm-backup-txt').value);
+    admPoints = data;
+    admRenderPoints();
+    admSaveAll();
+    admShowMsg('adm-backup-msg','✓ Importato con successo!');
+  } catch(e) {
+    admShowMsg('adm-backup-msg','✗ JSON non valido.');
+  }
+  setTimeout(function(){ admShowMsg('adm-backup-msg',''); }, 3000);
+}
+
+function admCopyBackup() {
+  var txt = document.getElementById('adm-backup-txt').value || JSON.stringify(admPoints, null, 2);
+  navigator.clipboard.writeText(txt).then(function(){
+    admShowMsg('adm-backup-msg','✓ Copiato!');
+    setTimeout(function(){ admShowMsg('adm-backup-msg',''); }, 2000);
+  });
+}
+
+function admChangePwd() {
+  var np = document.getElementById('adm-new-pwd').value.trim();
+  if (!np) { admShowMsg('adm-pwd-msg','Inserisci una password.'); return; }
+  try { localStorage.setItem(ADM_KEY, np); } catch(e){}
+  document.getElementById('adm-new-pwd').value = '';
+  admShowMsg('adm-pwd-msg','✓ Password cambiata!');
+  setTimeout(function(){ admShowMsg('adm-pwd-msg',''); }, 2000);
+}
+
+function admTab(name, el) {
+  document.querySelectorAll('.adm-sec').forEach(function(s){ s.classList.remove('on'); });
+  document.getElementById('adm-sec-' + name).classList.add('on');
+  document.querySelectorAll('.adm-tab').forEach(function(t){ t.classList.remove('sel'); });
+  el.classList.add('sel');
+}
+
+function admShowMsg(id, txt) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = txt;
+}
+
+// Carica i punti da localStorage se presenti
+function admBootData() {
+  try {
+    var saved = localStorage.getItem(ADM_DATA);
+    if (saved) POINTS = JSON.parse(saved);
+  } catch(e){}
+}
+
+// Controlla hash URL per aprire admin
+function checkHash() {
+  if (location.hash === '#admin') admOpen();
+}
+window.addEventListener('hashchange', checkHash);
+
 init();
+admBootData();
+admLoadColors();
+checkHash();
 </script>
 </body>
 </html>
