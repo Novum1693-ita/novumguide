@@ -1250,9 +1250,26 @@ function admExport() {
   admShowMsg('adm-backup-msg','✓ JSON pronto — copialo o scaricalo.');
 }
 
+function admNormalizePoint(pt) {
+  // Normalizza alias di lingua: "sp" → "es"
+  if (pt.sp && !pt.es) { pt.es = pt.sp; }
+  delete pt.sp;
+  // Rimuovi lingue non riconosciute
+  var valid = Object.keys(LINGUE);
+  Object.keys(pt).forEach(function(k) {
+    if (!['dur','photo','audio'].includes(k) && !valid.includes(k)) delete pt[k];
+  });
+  return pt;
+}
+
 function admImport() {
   try {
-    var data = JSON.parse(document.getElementById('adm-backup-txt').value);
+    var raw = document.getElementById('adm-backup-txt').value;
+    var data = JSON.parse(raw);
+    // Normalizza ogni punto
+    Object.keys(data).forEach(function(code) {
+      data[code] = admNormalizePoint(data[code]);
+    });
     admPoints = data;
     admRenderPoints();
     admSaveAll();
