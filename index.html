@@ -1076,6 +1076,9 @@ function admRenderPoints() {
   });
 }
 
+// Dati temporanei del form (tutte le lingue mentre si compila)
+var admFormData = {};
+
 function admOpenForm(code) {
   admEditCode = code;
   admCurLang  = Object.keys(LINGUE)[0];
@@ -1083,11 +1086,17 @@ function admOpenForm(code) {
   document.getElementById('af-msg').textContent = '';
 
   var pt = code ? admPoints[code] : {};
-  document.getElementById('af-code').value  = code || '';
-  document.getElementById('af-code').disabled = !!code;
-  document.getElementById('af-dur').value   = pt.dur || '';
-  document.getElementById('af-photo').value = pt.photo || '';
-  document.getElementById('af-audio').value = pt.audio || '';
+  // Copia i dati esistenti in admFormData per editarli in memoria
+  admFormData = {};
+  Object.keys(LINGUE).forEach(function(l){
+    admFormData[l] = pt[l] ? {title: pt[l].title||'', cat: pt[l].cat||'', desc: pt[l].desc||''} : {title:'',cat:'',desc:''};
+  });
+
+  document.getElementById('af-code').value   = code || '';
+  document.getElementById('af-code').disabled = false; // sempre modificabile
+  document.getElementById('af-dur').value    = pt.dur || '';
+  document.getElementById('af-photo').value  = pt.photo || '';
+  document.getElementById('af-audio').value  = pt.audio || '';
 
   // Tab lingue
   var tabs = document.getElementById('af-lang-tabs');
@@ -1095,61 +1104,83 @@ function admOpenForm(code) {
   Object.keys(LINGUE).forEach(function(l) {
     var b = document.createElement('button');
     b.className = 'adm-ltab' + (l === admCurLang ? ' sel' : '');
+    b.setAttribute('data-l', l);
     b.textContent = LINGUE[l].flag + ' ' + LINGUE[l].nome;
-    b.onclick = function(){ admCurLang = l; admUpdateLangFields(pt); admHighlightLangTab(); };
+    b.onclick = function(){
+      admSaveCurLangFields(); // salva lingua corrente prima di cambiare
+      admCurLang = l;
+      admUpdateLangFields();
+      admHighlightLangTab();
+    };
     tabs.appendChild(b);
   });
 
-  admUpdateLangFields(pt);
+  admUpdateLangFields();
   document.getElementById('adm-modal').classList.add('on');
 }
 
 function admHighlightLangTab() {
-  var tabs = document.querySelectorAll('#af-lang-tabs .adm-ltab');
-  tabs.forEach(function(b,i){
-    b.classList.toggle('sel', Object.keys(LINGUE)[i] === admCurLang);
+  document.querySelectorAll('#af-lang-tabs .adm-ltab').forEach(function(b){
+    b.classList.toggle('sel', b.getAttribute('data-l') === admCurLang);
   });
 }
 
-function admUpdateLangFields(pt) {
+// Salva i campi visibili in admFormData per la lingua corrente
+function admSaveCurLangFields() {
+  var t = document.getElementById('af-title');
+  var c = document.getElementById('af-cat');
+  var d = document.getElementById('af-desc');
+  if (t) admFormData[admCurLang] = { title: t.value, cat: c ? c.value : '', desc: d ? d.value : '' };
+}
+
+function admUpdateLangFields() {
   var l = admCurLang;
-  var d = (pt && pt[l]) || {};
+  var d = admFormData[l] || {title:'',cat:'',desc:''};
   var fields = document.getElementById('af-lang-fields');
   fields.innerHTML =
     '<div class="adm-form">' +
-      '<div class="adm-field full"><div class="adm-label">Titolo (' + l + ')</div>' +
+      '<div class="adm-field full"><div class="adm-label">Titolo (' + l.toUpperCase() + ')</div>' +
         '<input class="adm-input" id="af-title" value="' + escHtml(d.title||'') + '"/></div>' +
-      '<div class="adm-field full"><div class="adm-label">Categoria (' + l + ')</div>' +
+      '<div class="adm-field full"><div class="adm-label">Categoria (' + l.toUpperCase() + ')</div>' +
         '<input class="adm-input" id="af-cat" value="' + escHtml(d.cat||'') + '"/></div>' +
-      '<div class="adm-field full"><div class="adm-label">Descrizione (' + l + ')</div>' +
+      '<div class="adm-field full"><div class="adm-label">Descrizione (' + l.toUpperCase() + ')</div>' +
         '<textarea class="adm-textarea" id="af-desc">' + escHtml(d.desc||'') + '</textarea></div>' +
     '</div>';
 }
 
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function admCollectLangFields() {
-  return {
-    title: (document.getElementById('af-title')||{value:''}).value.trim(),
-    cat:   (document.getElementById('af-cat')||{value:''}).value.trim(),
-    desc:  (document.getElementById('af-desc')||{value:''}).value.trim()
-  };
-}
-
 function admSavePoint() {
-  // Salva i campi lingua corrente nel punto
-  var code = document.getElementById('af-code').value.trim();
-  if (!code) { document.getElementById('af-msg').textContent = 'Inserisci un codice.'; return; }
-  if (!admEditCode && admPoints[code]) { document.getElementById('af-msg').textContent = 'Codice già esistente.'; return; }
+  // Prima salva la lingua corrente visibile
+  admSaveCurLangFields();
 
-  if (!admPoints[code]) admPoints[code] = {};
-  var pt = admPoints[code];
+  var newCode = document.getElementById('af-code').value.trim();
+  if (!newCode) { document.getElementById('af-msg').textContent = 'Inserisci un codice.'; return; }
+
+  // Se è un nuovo punto e il codice esiste già, blocca
+  if (!admEditCode && admPoints[newCode]) {
+    document.getElementById('af-msg').textContent = 'Codice già esistente.'; return;
+  }
+
+  // Se è modifica con cambio codice: elimina la vecchia chiave
+  if (admEditCode && admEditCode !== newCode) {
+    delete admPoints[admEditCode];
+  }
+
+  var pt = admPoints[newCode] || {};
   pt.dur   = parseInt(document.getElementById('af-dur').value) || 60;
   pt.photo = document.getElementById('af-photo').value.trim();
   pt.audio = document.getElementById('af-audio').value.trim();
-  pt[admCurLang] = admCollectLangFields();
 
-  admEditCode = code; // per eventuali switch lingua futuri
+  // Copia tutte le lingue da admFormData
+  Object.keys(LINGUE).forEach(function(l){
+    var d = admFormData[l];
+    if (d && (d.title || d.cat || d.desc)) {
+      pt[l] = { title: d.title, cat: d.cat, desc: d.desc };
+    }
+  });
+
+  admPoints[newCode] = pt;
   admCloseModal();
   admRenderPoints();
   admSaveAll();
